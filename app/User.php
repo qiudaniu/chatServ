@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\Auth;
 
 class User extends Authenticatable
 {
@@ -26,4 +27,14 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    //根据电话号码查询用户是否存在
+    public static function findUserForPhone($phone)
+    {
+        $user = User::where('phone',$phone)
+            ->where('id','!=',Auth::id())
+            ->first();
+
+        return $user;
+    }
 }

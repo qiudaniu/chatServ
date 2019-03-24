@@ -5,7 +5,11 @@
  *
  * 101 好友id为空
  * 102 发送数据为空
- * 103 好友不在线
+ *
+ * 201 加好友成功
+ * 202 加好友失败
+ * 203 已经是好友
+ * 204 加好友未知错误
  *
  *
  *
@@ -17,6 +21,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Friends;
 use App\message;
 use App\User;
 use Illuminate\Http\Request;
@@ -51,7 +56,7 @@ class IndexController extends Controller
 
 //        $requestBody = file_get_contents('php://input');
         //$requestData 按照对象来获取属性
-        exit(var_export($request->data));
+//        exit(var_export($request->data));
         $user_id = empty($request->user_id) ? '' : $request->user_id;
         if (!$user_id) {
             return $this->responseMsg('好友id不能为空', 101);
@@ -106,5 +111,23 @@ class IndexController extends Controller
         //sendToUid 中的 data 是一个字符串，所以要将数据转换成json数据
         Gateway::sendToUid($user_id,$sendData);
 
+    }
+
+    //加好友
+    public function addFriend(Request $request)
+    {
+        $user = User::findUserForPhone($request->add_friend);
+        if ($user){
+            $friend = Friends::addFriend(Auth::id(),$user->id);
+            if ($friend == 'ok'){
+                return $this->responseMsg('添加好友成功',201);
+            }elseif ($friend == 'fail'){
+                return $this->responseMsg('添加好友失败',202);
+            }elseif ($friend == 'is_friend'){
+                return $this->responseMsg('已经是好友',203);
+            }else{
+                return $this->responseMsg('添加好友未知错误',204);
+            }
+        }
     }
 }

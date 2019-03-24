@@ -28,6 +28,10 @@
             margin-top: 30px;
             margin-left: 20px;
         }
+        .main-left-add-friend{
+            margin-top: 20px;
+            margin-left: 10px;
+        }
 
 
 
@@ -171,8 +175,7 @@
             width: 100%;
             border: 1px solid;
         }
-        .image-input > input
-        {
+        .image-input > input {
             display: none;
         }
     </style>
@@ -194,6 +197,38 @@
                     <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552156926711&di=4be383b64e02c10412c605c75161d2da&imgtype=0&src=http%3A%2F%2Fpic.qiantucdn.com%2F58pic%2F17%2F73%2F57%2F24v58PICpyg_1024.png"
                          height="20" width="20" onclick="friendList()">
                 </div>
+                <div class="main-left-add-friend">
+                    <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+                        +
+                    </button>
+                </div>
+            </div>
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                &times;
+                            </button>
+                            <h4 class="modal-title" id="myModalLabel">
+                                添加好友
+                            </h4>
+                        </div>
+                        <div class="modal-body">
+                            <label for="add_friend">
+                                好友电话号码：
+                                <input type="text" name="add_friend" id="add_friend" />
+                            </label>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                            </button>
+                            <button type="button" class="btn btn-primary" onclick="add_friend()">
+                                提交更改
+                            </button>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal -->
             </div>
 
             <div class="main-middle">
@@ -202,7 +237,7 @@
                     <input type="text" name="search" class="search-text" placeholder="搜索" />
                     <input type="submit" name="search-submit" class="search-submit">
                 </div>
-                <div style="display: block" id="session">
+                <div style="display: block" id="session" onclick="show_chat_detail()">
                     <div class="session-list">
                         <div class="session-list-img">
                             <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552207666873&di=3ec7658b5ea67262a3f4c580e2186d43&imgtype=0&src=http%3A%2F%2Fwww.zhuobufan.com%2FUserFiles%2FAlbum%2F17%2F01_12%2F8425d949-328c-414f-8fb3-deeb5d166fd0.jpg"
@@ -222,7 +257,7 @@
                         </div>
 
                     </div>
-                    <div class="session-list">
+                    <div class="session-list" onclick="show_chat_detail()">
                         <div class="session-list-img">
                             <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552207666873&di=3ec7658b5ea67262a3f4c580e2186d43&imgtype=0&src=http%3A%2F%2Fwww.zhuobufan.com%2FUserFiles%2FAlbum%2F17%2F01_12%2F8425d949-328c-414f-8fb3-deeb5d166fd0.jpg"
                                  height="40px" width="40px">
@@ -243,12 +278,13 @@
                     </div>
 
                 </div>
-                <div style="display: none;" id="friend" class="friend-list">
+                {{--class="friend-list"--}}
+                <div style="display: none;" id="friend">
                     <div class="friend-head">
                         <div style="height: 20px;width: 100%;margin-left: 20px">
                             <span><h6>新的朋友</h6></span>
                         </div>
-                        <div onmouseover="this.className='change_new_friend'" onmouseout="this.className='new_friend'" class="new_friend" onclick="display_friend_list()">
+                        <div onmouseover="this.className='change_new_friend'" onmouseout="this.className='new_friend'" class="new_friend" onclick="show_friend_list()">
                             <div class="session-list-img">
                                 <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552207666873&di=3ec7658b5ea67262a3f4c580e2186d43&imgtype=0&src=http%3A%2F%2Fwww.zhuobufan.com%2FUserFiles%2FAlbum%2F17%2F01_12%2F8425d949-328c-414f-8fb3-deeb5d166fd0.jpg"
                                      height="30px" width="30px">
@@ -260,14 +296,14 @@
                         <div style="height: 20px;width: 100%;margin-left: 20px;">
                             <span><h6>群聊</h6></span>
                         </div>
-                        <div onmouseover="this.className='change_group'" onmouseout="this.className='my_group'" class="my_group" onclick="display_friend_list()">
+                        <div onmouseover="this.className='change_group'" onmouseout="this.className='my_group'" class="my_group" onclick="group_detail()">
                             <div class="session-list-img">
                                 <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552207666873&di=3ec7658b5ea67262a3f4c580e2186d43&imgtype=0&src=http%3A%2F%2Fwww.zhuobufan.com%2FUserFiles%2FAlbum%2F17%2F01_12%2F8425d949-328c-414f-8fb3-deeb5d166fd0.jpg"
                                      height="30px" width="30px">
                             </div>
                             <span class="add_word">群聊</span>
                         </div>
-                        <div onmouseover="this.className='change_group'" onmouseout="this.className='my_group'" class="my_group" onclick="display_friend_list()">
+                        <div onmouseover="this.className='change_group'" onmouseout="this.className='my_group'" class="my_group" onclick="group_detail()">
                             <div class="session-list-img">
                                 <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552207666873&di=3ec7658b5ea67262a3f4c580e2186d43&imgtype=0&src=http%3A%2F%2Fwww.zhuobufan.com%2FUserFiles%2FAlbum%2F17%2F01_12%2F8425d949-328c-414f-8fb3-deeb5d166fd0.jpg"
                                      height="30px" width="30px">
@@ -280,14 +316,14 @@
                             <span><h6>好友</h6></span>
                         </div>
 
-                        <div onmouseover="this.className='change_group'" onmouseout="this.className='my_group'" class="my_group" onclick="display_friend_list()">
+                        <div onmouseover="this.className='change_group'" onmouseout="this.className='my_group'" class="my_group" onclick="friend_detail()">
                             <div class="session-list-img">
                                 <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552207666873&di=3ec7658b5ea67262a3f4c580e2186d43&imgtype=0&src=http%3A%2F%2Fwww.zhuobufan.com%2FUserFiles%2FAlbum%2F17%2F01_12%2F8425d949-328c-414f-8fb3-deeb5d166fd0.jpg"
                                      height="30px" width="30px">
                             </div>
                             <span class="add_word">好友1</span>
                         </div>
-                        <div onmouseover="this.className='change_group'" onmouseout="this.className='my_group'" class="my_group" onclick="display_friend_list()">
+                        <div onmouseover="this.className='change_group'" onmouseout="this.className='my_group'" class="my_group" onclick="friend_detail()">
                             <div class="session-list-img">
                                 <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552207666873&di=3ec7658b5ea67262a3f4c580e2186d43&imgtype=0&src=http%3A%2F%2Fwww.zhuobufan.com%2FUserFiles%2FAlbum%2F17%2F01_12%2F8425d949-328c-414f-8fb3-deeb5d166fd0.jpg"
                                      height="30px" width="30px">
@@ -298,7 +334,7 @@
 
                 </div>
             </div>
-            <div class="main-right">
+            <div style="display: block;" id="chat_detail" class="main-right">
                 <div class="chat-header">
                     <h4 class="friend-name">女朋友</h4>
                 </div>
@@ -307,7 +343,7 @@
                         <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552207666873&di=3ec7658b5ea67262a3f4c580e2186d43&imgtype=0&src=http%3A%2F%2Fwww.zhuobufan.com%2FUserFiles%2FAlbum%2F17%2F01_12%2F8425d949-328c-414f-8fb3-deeb5d166fd0.jpg"
                              class="friend-detail">
                         <div class="message">
-                            nihao
+                            逻辑就这么简单
                         </div>
                     </div>
                     <div class="body-me">
@@ -336,6 +372,120 @@
                     </div>
                 </div>
             </div>
+            <div style="display: none;" id="add_friend_detail" class="main-right">
+                <div class="chat-header">
+                    <h4 class="friend-name">女朋友</h4>
+                </div>
+                <div class="chat-body">
+                    <div class="body-friend">
+                        <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552207666873&di=3ec7658b5ea67262a3f4c580e2186d43&imgtype=0&src=http%3A%2F%2Fwww.zhuobufan.com%2FUserFiles%2FAlbum%2F17%2F01_12%2F8425d949-328c-414f-8fb3-deeb5d166fd0.jpg"
+                             class="friend-detail">
+                        <div class="message">
+                            我可以改变世界
+                        </div>
+                    </div>
+                    <div class="body-me">
+
+                    </div>
+                </div>
+                <div class="chat-footer">
+                    <div class="tool">
+                        {{--发送文件 聊天记录 {{url('test')}}--}}
+                        {{--<form action="{{url('test')}}" method="post" enctype="multipart/form-data">
+                            {{ csrf_field() }}--}}
+                        <div class="image-input">
+                            <label for="file-input">
+                                <img src="{{asset('images/file.jpg')}}" height="30px" width="30px">
+                            </label>
+                            <input id="file-input" type="file" name="file" onclick="sendFile()">
+                        </div>
+                        <textarea rows="3" cols="62" id="send-data">
+
+                            </textarea>
+                        {{--点击发送时，1 将数据发送到后端 2 将数据呈现在内容body中 type="submit" name="submit" value="发送"--}}
+                        <input style="float: right" type="button" value="发送" onclick="outData()" >
+                        {{--</form>--}}
+
+
+                    </div>
+                </div>
+            </div>
+            <div style="display: none;" id="group_detail" class="main-right">
+                <div class="chat-header">
+                    <h4 class="friend-name">女朋友</h4>
+                </div>
+                <div class="chat-body">
+                    <div class="body-friend">
+                        <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552207666873&di=3ec7658b5ea67262a3f4c580e2186d43&imgtype=0&src=http%3A%2F%2Fwww.zhuobufan.com%2FUserFiles%2FAlbum%2F17%2F01_12%2F8425d949-328c-414f-8fb3-deeb5d166fd0.jpg"
+                             class="friend-detail">
+                        <div class="message">
+                            群聊
+                        </div>
+                    </div>
+                    <div class="body-me">
+
+                    </div>
+                </div>
+                <div class="chat-footer">
+                    <div class="tool">
+                        {{--发送文件 聊天记录 {{url('test')}}--}}
+                        {{--<form action="{{url('test')}}" method="post" enctype="multipart/form-data">
+                            {{ csrf_field() }}--}}
+                        <div class="image-input">
+                            <label for="file-input">
+                                <img src="{{asset('images/file.jpg')}}" height="30px" width="30px">
+                            </label>
+                            <input id="file-input" type="file" name="file" onclick="sendFile()">
+                        </div>
+                        <textarea rows="3" cols="62" id="send-data">
+
+                            </textarea>
+                        {{--点击发送时，1 将数据发送到后端 2 将数据呈现在内容body中 type="submit" name="submit" value="发送"--}}
+                        <input style="float: right" type="button" value="发送" onclick="outData()" >
+                        {{--</form>--}}
+
+
+                    </div>
+                </div>
+            </div>
+            <div style="display: none;" id="friend_detail" class="main-right">
+                <div class="chat-header">
+                    <h4 class="friend-name">女朋友</h4>
+                </div>
+                <div class="chat-body">
+                    <div class="body-friend">
+                        <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552207666873&di=3ec7658b5ea67262a3f4c580e2186d43&imgtype=0&src=http%3A%2F%2Fwww.zhuobufan.com%2FUserFiles%2FAlbum%2F17%2F01_12%2F8425d949-328c-414f-8fb3-deeb5d166fd0.jpg"
+                             class="friend-detail">
+                        <div class="message">
+                            好友
+                        </div>
+                    </div>
+                    <div class="body-me">
+
+                    </div>
+                </div>
+                <div class="chat-footer">
+                    <div class="tool">
+                        {{--发送文件 聊天记录 {{url('test')}}--}}
+                        {{--<form action="{{url('test')}}" method="post" enctype="multipart/form-data">
+                            {{ csrf_field() }}--}}
+                        <div class="image-input">
+                            <label for="file-input">
+                                <img src="{{asset('images/file.jpg')}}" height="30px" width="30px">
+                            </label>
+                            <input id="file-input" type="file" name="file" onclick="sendFile()">
+                        </div>
+                        <textarea rows="3" cols="62" id="send-data">
+
+                            </textarea>
+                        {{--点击发送时，1 将数据发送到后端 2 将数据呈现在内容body中 type="submit" name="submit" value="发送"--}}
+                        <input style="float: right" type="button" value="发送" onclick="outData()" >
+                        {{--</form>--}}
+
+
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -347,7 +497,6 @@
         for(i=0;i<order.length;i++) {//遍历处理，对于每个块都有onclick函数
 
             order[i].onclick = function () {
-                alert(1);
                 for(i=0;i<order.length;i++){//在点击事件中再加载一个遍历，当点击事件触发时，先让其他元素的颜色保持不变
                     order[i].style="background-color:aliceblue";
                 }
@@ -355,8 +504,8 @@
             }
 
         }
-    }
-    /*ws = new WebSocket("ws://127.0.0.1:8282");
+    };
+    ws = new WebSocket("ws://127.0.0.1:8282");
     ws.onmessage = function($e){
         $data = JSON.parse($e.data);
         switch ($data.type){
@@ -385,7 +534,7 @@
             default:
                 break;
         }
-    };*/
+    };
 
     //关闭gatewayworker 时触发onclose函数
     ws.onclose = function () {
@@ -425,10 +574,53 @@
         document.getElementById("session").style.display = 'none';
     }
 
-    function display_friend_list() {
-        alert(1);
+    function show_chat_detail() {
+        document.getElementById("chat_detail").style.display = 'block';
+        document.getElementById("add_friend_detail").style.display = 'none';
+        document.getElementById("group_detail").style.display = 'none';
+        document.getElementById("friend_detail").style.display = 'none';
     }
 
+    function show_friend_list() {
+        document.getElementById("chat_detail").style.display = 'none';
+        document.getElementById("add_friend_detail").style.display = 'block';
+        document.getElementById("group_detail").style.display = 'none';
+        document.getElementById("friend_detail").style.display = 'none';
+    }
+
+    function group_detail() {
+        document.getElementById("chat_detail").style.display = 'none';
+        document.getElementById("add_friend_detail").style.display = 'none';
+        document.getElementById("group_detail").style.display = 'block';
+        document.getElementById("friend_detail").style.display = 'none';
+    }
+
+    function friend_detail() {
+        document.getElementById("chat_detail").style.display = 'none';
+        document.getElementById("add_friend_detail").style.display = 'none';
+        document.getElementById("group_detail").style.display = 'none';
+        document.getElementById("friend_detail").style.display = 'block';
+    }
+
+    function add_friend() {
+        var phone = $("#add_friend").val();
+        $.ajax({
+            type:'POST',
+            url:'/addFriend',
+            data:{'add_friend':phone},
+            dataType:'json',
+            headers : {
+                'X-CSRF-TOKEN' : $('meta[name = "csrf-token"]').attr('content')
+            },
+            success: function (data) {
+                var obj = JSON.parse(data);
+                alert("success:" + obj.message);
+            },
+            error: function (data) {
+                alert("error" + data.data);
+            }
+        });
+    }
     /*function writeObj(obj){
         var description = "";
         for(var i in obj){
