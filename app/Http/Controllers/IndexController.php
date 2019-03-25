@@ -10,6 +10,7 @@
  * 202 加好友失败
  * 203 已经是好友
  * 204 加好友未知错误
+ * 205 返回好友列表
  *
  *
  *
@@ -23,6 +24,7 @@ namespace App\Http\Controllers;
 
 use App\Friends;
 use App\message;
+use App\Sessions;
 use App\User;
 use Illuminate\Http\Request;
 use GatewayClient\Gateway;
@@ -129,5 +131,25 @@ class IndexController extends Controller
                 return $this->responseMsg('添加好友未知错误',204);
             }
         }
+    }
+
+    //返回会话列表.携带所有的聊天记录
+    public function sessionList()
+    {
+        $list = Sessions::join('friends','sessions.friend_id','=','friends.friend_id')
+            ->where('sessions.status','=',0)
+            ->where('friends.user_id',Auth::id())
+            ->select('')
+            ->get();
+    }
+    //返回好友列表
+    public function friendList()
+    {
+        $list = Friends::leftJoin('users','friends.my_friend_id','=','users.id')
+            ->where('user_id',Auth::id())
+            ->where('delete','=',0)
+            ->select('users.pic_url','friends.user_id','friends.my_friend_id','friends.re_mark')
+            ->get();
+        return $this->responseData($list,'好友列表',205);
     }
 }

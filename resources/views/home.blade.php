@@ -316,19 +316,14 @@
                             <span><h6>好友</h6></span>
                         </div>
 
-                        <div onmouseover="this.className='change_group'" onmouseout="this.className='my_group'" class="my_group" onclick="friend_detail()">
-                            <div class="session-list-img">
-                                <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552207666873&di=3ec7658b5ea67262a3f4c580e2186d43&imgtype=0&src=http%3A%2F%2Fwww.zhuobufan.com%2FUserFiles%2FAlbum%2F17%2F01_12%2F8425d949-328c-414f-8fb3-deeb5d166fd0.jpg"
-                                     height="30px" width="30px">
-                            </div>
-                            <span class="add_word">好友1</span>
-                        </div>
-                        <div onmouseover="this.className='change_group'" onmouseout="this.className='my_group'" class="my_group" onclick="friend_detail()">
-                            <div class="session-list-img">
-                                <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552207666873&di=3ec7658b5ea67262a3f4c580e2186d43&imgtype=0&src=http%3A%2F%2Fwww.zhuobufan.com%2FUserFiles%2FAlbum%2F17%2F01_12%2F8425d949-328c-414f-8fb3-deeb5d166fd0.jpg"
-                                     height="30px" width="30px">
-                            </div>
-                            <span class="add_word">好友2</span>
+                        <div id="friend_list">
+                            {{--<div onmouseover="this.className='change_group'" onmouseout="this.className='my_group'" class="my_group" onclick="friend_detail()">
+                                <div class="session-list-img">
+                                    <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552207666873&di=3ec7658b5ea67262a3f4c580e2186d43&imgtype=0&src=http%3A%2F%2Fwww.zhuobufan.com%2FUserFiles%2FAlbum%2F17%2F01_12%2F8425d949-328c-414f-8fb3-deeb5d166fd0.jpg"
+                                         height="30px" width="30px">
+                                </div>
+                                <span class="add_word">好友1</span>
+                            </div>--}}
                         </div>
                     </div>
 
@@ -450,15 +445,11 @@
             </div>
             <div style="display: none;" id="friend_detail" class="main-right">
                 <div class="chat-header">
-                    <h4 class="friend-name">女朋友</h4>
+                    <h4 class="friend-name" id="friend_chat"></h4>
                 </div>
                 <div class="chat-body">
                     <div class="body-friend">
-                        <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552207666873&di=3ec7658b5ea67262a3f4c580e2186d43&imgtype=0&src=http%3A%2F%2Fwww.zhuobufan.com%2FUserFiles%2FAlbum%2F17%2F01_12%2F8425d949-328c-414f-8fb3-deeb5d166fd0.jpg"
-                             class="friend-detail">
-                        <div class="message">
-                            好友
-                        </div>
+
                     </div>
                     <div class="body-me">
 
@@ -491,6 +482,30 @@
 </div>
 @endsection
 <script>
+    //获取好友列表
+    $.ajax({
+        type:'GET',
+        url: "/getFriendList",
+        success : function ($e) {
+            var obj = JSON.parse($e);
+            if (obj.code = 205){
+                var str = '';
+                var dataArr = obj.data;
+                console.log(dataArr);
+                for(var i=0,len=dataArr.length ; i<len ; i++){
+                    str = '<div onmouseover="this.className=\'change_group\'" onmouseout="this.className=\'my_group\'" class="my_group" onclick="friend_detail(this)">' +
+                        '<div class="session-list-img">' +
+                        '<img src="'+dataArr[0]['pic_url']+'" height="30px" width="30px">' +
+                        '</div>' +
+                        '<span class="add_word">' + dataArr[i]['re_mark'] + '</span>' +
+                        '<input type="hidden" name="my_friend_id" value="'+dataArr[i]['my_friend_id']+'">'+
+                        '</div>'
+                }
+                document.getElementById('friend_list').innerHTML = str;
+            }
+        }
+
+    });
     window.onload=function (){
         var order=document.getElementsByClassName("session-list");
         order[0].style="background-color:#f4f7eb";
@@ -574,7 +589,7 @@
         document.getElementById("session").style.display = 'none';
     }
 
-    function show_chat_detail() {
+    function show_chat_detail($this) {
         document.getElementById("chat_detail").style.display = 'block';
         document.getElementById("add_friend_detail").style.display = 'none';
         document.getElementById("group_detail").style.display = 'none';
@@ -595,11 +610,17 @@
         document.getElementById("friend_detail").style.display = 'none';
     }
 
-    function friend_detail() {
+    function friend_detail(obj) {
         document.getElementById("chat_detail").style.display = 'none';
         document.getElementById("add_friend_detail").style.display = 'none';
         document.getElementById("group_detail").style.display = 'none';
         document.getElementById("friend_detail").style.display = 'block';
+        /*var data = document.getElementsByClassName("friend-name");
+        console.log(data);*/
+        document.getElementsByClassName("friend-name")[3]['innerHTML'] = obj.getElementsByClassName("add_word")[0]['innerHTML'];
+        document.getElementById("friend").style.display = 'none';
+        document.getElementById("session").style.display = 'block';
+
     }
 
     function add_friend() {

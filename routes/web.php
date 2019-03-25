@@ -21,6 +21,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::post('/message', 'IndexController@message');
 Route::get('/index', 'IndexController@index');
 Route::post('/addFriend' , 'IndexController@addFriend');
+Route::get('/getFriendList' , 'IndexController@friendList');
 
 
 Route::post('/bind', 'IndexController@bind');
