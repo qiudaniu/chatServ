@@ -33,9 +33,12 @@ use Illuminate\Support\Facades\Redis;
 
 class IndexController extends Controller
 {
-    public function __construct()
+    public $test;
+    public function __construct(Request $request)
     {
         Gateway::$registerAddress = '127.0.0.1:1238';
+//        $this->bind($request->client_id);
+        $this->test = 1;
     }
 
     /**
@@ -43,7 +46,7 @@ class IndexController extends Controller
      * @param $client_id
      * @param $user_id
      */
-    public function bind(Request $request)
+    private function bind(Request $request)
     {
         Gateway::bindUid($request->client_id, Auth::id());
     }
@@ -120,6 +123,8 @@ class IndexController extends Controller
     {
         $user = User::findUserForPhone($request->add_friend);
         if ($user){
+            //当用户存在。发送添加好友请求，如果好友通过后，添加成功；不通过，添加失败
+//            Gateway::sendToUid();
             $friend = Friends::addFriend(Auth::id(),$user->id);
             if ($friend == 'ok'){
                 return $this->responseMsg('添加好友成功',201);
@@ -136,11 +141,19 @@ class IndexController extends Controller
     //返回会话列表.携带所有的聊天记录
     public function sessionList()
     {
-        $list = Sessions::join('friends','sessions.friend_id','=','friends.friend_id')
+        $list = Sessions::leftjoin('friends','sessions.friend_id','=','friends.friend_id')
+            ->leftJoin('users','friends.user_id','=','users.id')
             ->where('sessions.status','=',0)
+            ->where('friends.defriend','=',0)
             ->where('friends.user_id',Auth::id())
-            ->select('')
+            ->select('friends.friend_id','friends.re_mark','sessions.session_id','users.pic_url') //,'messages.*'
             ->get();
+        foreach ($list as $key=>$value){
+            $list[$key]['message'] = message::where('session_id','=',$list[0]['session_id'])
+                ->get();
+        }
+
+        return $this->responseData($list,'会话列表',206);
     }
     //返回好友列表
     public function friendList()

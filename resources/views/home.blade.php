@@ -237,45 +237,8 @@
                     <input type="text" name="search" class="search-text" placeholder="搜索" />
                     <input type="submit" name="search-submit" class="search-submit">
                 </div>
-                <div style="display: block" id="session" onclick="show_chat_detail()">
-                    <div class="session-list">
-                        <div class="session-list-img">
-                            <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552207666873&di=3ec7658b5ea67262a3f4c580e2186d43&imgtype=0&src=http%3A%2F%2Fwww.zhuobufan.com%2FUserFiles%2FAlbum%2F17%2F01_12%2F8425d949-328c-414f-8fb3-deeb5d166fd0.jpg"
-                                 height="40px" width="40px">
-                        </div>
-                        <div class="session-list-body">
-                            <div class="session-list-name">
-                                邱立峰
-                            </div>
-                            <div class="session-list-message">
-                                hello world
-                            </div>
-                        </div>
+                <div class="session-list" style="display: block" id="session" onclick="show_chat_detail()">
 
-                        <div class="session-list-time">
-                            14:15
-                        </div>
-
-                    </div>
-                    <div class="session-list" onclick="show_chat_detail()">
-                        <div class="session-list-img">
-                            <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552207666873&di=3ec7658b5ea67262a3f4c580e2186d43&imgtype=0&src=http%3A%2F%2Fwww.zhuobufan.com%2FUserFiles%2FAlbum%2F17%2F01_12%2F8425d949-328c-414f-8fb3-deeb5d166fd0.jpg"
-                                 height="40px" width="40px">
-                        </div>
-                        <div class="session-list-body">
-                            <div class="session-list-name">
-                                邱立峰
-                            </div>
-                            <div class="session-list-message">
-                                hello world
-                            </div>
-                        </div>
-
-                        <div class="session-list-time">
-                            14:15
-                        </div>
-
-                    </div>
 
                 </div>
                 {{--class="friend-list"--}}
@@ -482,6 +445,40 @@
 </div>
 @endsection
 <script>
+    //获取会话列表
+    $.ajax({
+        type:'GET',
+        url: "/getSessionList",
+        success:function($e){
+//            console.log($e);
+            var obj = JSON.parse($e);
+            if (obj.code = 206){
+                var str = '';
+                var dataArr = obj.data;
+                console.log(dataArr);
+                for(var i=0,len=dataArr.length ; i<len ; i++){
+                    str += '<div class="session-list" onclick="show_chat_detail()">'+
+                     '<div class="session-list-img">'+
+                     '<img src="'+dataArr[i]['pic_url']+'" height="40px" width="40px">'+
+                     '</div>'+
+                     '<div class="session-list-body">'+
+                     '<div class="session-list-name">'+
+                        dataArr[i]['re_mark']+
+                     '</div>'+
+                     '<div class="session-list-message">'+
+                        dataArr[i]['re_mark']+
+                     '</div>'+
+                     '</div>'+
+                     '<div class="session-list-time">'+
+                     '14:15'+
+                     '</div>'+
+                     '</div>';
+                }
+                document.getElementById("session").innerHTML = str;
+
+            }
+        }
+    });
     //获取好友列表
     $.ajax({
         type:'GET',
@@ -491,15 +488,14 @@
             if (obj.code = 205){
                 var str = '';
                 var dataArr = obj.data;
-                console.log(dataArr);
                 for(var i=0,len=dataArr.length ; i<len ; i++){
-                    str = '<div onmouseover="this.className=\'change_group\'" onmouseout="this.className=\'my_group\'" class="my_group" onclick="friend_detail(this)">' +
+                    str += '<div onmouseover="this.className=\'change_group\'" onmouseout="this.className=\'my_group\'" class="my_group" onclick="friend_detail(this)">' +
                         '<div class="session-list-img">' +
                         '<img src="'+dataArr[0]['pic_url']+'" height="30px" width="30px">' +
                         '</div>' +
                         '<span class="add_word">' + dataArr[i]['re_mark'] + '</span>' +
                         '<input type="hidden" name="my_friend_id" value="'+dataArr[i]['my_friend_id']+'">'+
-                        '</div>'
+                        '</div>';
                 }
                 document.getElementById('friend_list').innerHTML = str;
             }
@@ -629,13 +625,17 @@
             type:'POST',
             url:'/addFriend',
             data:{'add_friend':phone},
-            dataType:'json',
+//            dataType:'json',
             headers : {
                 'X-CSRF-TOKEN' : $('meta[name = "csrf-token"]').attr('content')
             },
             success: function (data) {
                 var obj = JSON.parse(data);
                 alert("success:" + obj.message);
+                //添加好友成功后跳转到聊天页面
+                if (obj.code = 201){
+
+                }
             },
             error: function (data) {
                 alert("error" + data.data);

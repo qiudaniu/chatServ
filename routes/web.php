@@ -22,6 +22,7 @@ Route::post('/message', 'IndexController@message');
 Route::get('/index', 'IndexController@index');
 Route::post('/addFriend' , 'IndexController@addFriend');
 Route::get('/getFriendList' , 'IndexController@friendList');
+Route::get('/getSessionList' , 'IndexController@sessionList');
 
 
 Route::post('/bind', 'IndexController@bind');
