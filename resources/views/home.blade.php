@@ -452,7 +452,7 @@
         success:function($e){
 //            console.log($e);
             var obj = JSON.parse($e);
-            if (obj.code = 206){
+            if (obj.code == 206){
                 var str = '';
                 var dataArr = obj.data;
                 console.log(dataArr);
@@ -485,7 +485,7 @@
         url: "/getFriendList",
         success : function ($e) {
             var obj = JSON.parse($e);
-            if (obj.code = 205){
+            if (obj.code == 205){
                 var str = '';
                 var dataArr = obj.data;
                 for(var i=0,len=dataArr.length ; i<len ; i++){
@@ -619,11 +619,12 @@
 
     }
 
+    //发送加好友申请
     function add_friend() {
         var phone = $("#add_friend").val();
         $.ajax({
             type:'POST',
-            url:'/addFriend',
+            url:'/sendAddFriendRequest',
             data:{'add_friend':phone},
 //            dataType:'json',
             headers : {
@@ -631,11 +632,11 @@
             },
             success: function (data) {
                 var obj = JSON.parse(data);
-                alert("success:" + obj.message);
-                //添加好友成功后跳转到聊天页面
-                if (obj.code = 201){
-
+                // console.log(obj);
+                if (obj.code == 201 || obj.code == 208) {
+                    alert(obj.message);
                 }
+
             },
             error: function (data) {
                 alert("error" + data.data);

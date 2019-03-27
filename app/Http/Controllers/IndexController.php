@@ -6,12 +6,14 @@
  * 101 好友id为空
  * 102 发送数据为空
  *
- * 201 加好友成功
- * 202 加好友失败
- * 203 已经是好友
- * 204 加好友未知错误
- * 205 返回好友列表
- *
+ * 201 发送好友申请
+ * 202 加好友成功
+ * 203 加好友失败
+ * 204 已经是好友
+ * 205 加好友未知错误
+ * 206 返回好友列表
+ * 207 返回会话列表
+ * 208 没有此用户
  *
  *
  * 301 用户发送信息，保存到数据库失败
@@ -117,23 +119,38 @@ class IndexController extends Controller
         Gateway::sendToUid($user_id,$sendData);
 
     }
-
-    //加好友
-    public function addFriend(Request $request)
+    
+    //发送加好友请求
+    public function sendAddFriendRequest(Request $request)
     {
         $user = User::findUserForPhone($request->add_friend);
         if ($user){
             //当用户存在。发送添加好友请求，如果好友通过后，添加成功；不通过，添加失败
-//            Gateway::sendToUid();
+            $re_mark = User::where('id',Auth::id())->select('re_mark')->first();
+            $data = json_encode([
+                'type'=>'add_friend_request',
+                'message'=> $re_mark['re_mark'].'请求添加为好友',
+            ]);
+            Gateway::sendToUid($user->id,$data);
+            return $this->responseMsg('好友请求已发送，等待好友回复',201);
+        }
+        return $this->responseMsg('查无此用户，请确认后重试',208);
+    }
+
+    //好友通过后，双方添加为好友。
+    public function addFriend(Request $request)
+    {
+        $user = User::findUserForPhone($request->add_friend);
+        if ($user){
             $friend = Friends::addFriend(Auth::id(),$user->id);
             if ($friend == 'ok'){
-                return $this->responseMsg('添加好友成功',201);
+                return $this->responseMsg('添加好友成功',202);
             }elseif ($friend == 'fail'){
-                return $this->responseMsg('添加好友失败',202);
+                return $this->responseMsg('添加好友失败',203);
             }elseif ($friend == 'is_friend'){
-                return $this->responseMsg('已经是好友',203);
+                return $this->responseMsg('已经是好友',204);
             }else{
-                return $this->responseMsg('添加好友未知错误',204);
+                return $this->responseMsg('添加好友未知错误',205);
             }
         }
     }
@@ -153,7 +170,7 @@ class IndexController extends Controller
                 ->get();
         }
 
-        return $this->responseData($list,'会话列表',206);
+        return $this->responseData($list,'会话列表',207);
     }
     //返回好友列表
     public function friendList()
@@ -163,6 +180,6 @@ class IndexController extends Controller
             ->where('delete','=',0)
             ->select('users.pic_url','friends.user_id','friends.my_friend_id','friends.re_mark')
             ->get();
-        return $this->responseData($list,'好友列表',205);
+        return $this->responseData($list,'好友列表',206);
     }
 }
