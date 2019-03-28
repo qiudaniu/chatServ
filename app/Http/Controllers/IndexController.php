@@ -48,7 +48,7 @@ class IndexController extends Controller
      * @param $client_id
      * @param $user_id
      */
-    private function bind(Request $request)
+    public function bind(Request $request)
     {
         Gateway::bindUid($request->client_id, Auth::id());
     }
@@ -126,10 +126,11 @@ class IndexController extends Controller
         $user = User::findUserForPhone($request->add_friend);
         if ($user){
             //当用户存在。发送添加好友请求，如果好友通过后，添加成功；不通过，添加失败
-            $re_mark = User::where('id',Auth::id())->select('re_mark')->first();
+            $re_mark = User::where('id',Auth::id())->select('re_mark','pic_url')->first();
             $data = json_encode([
                 'type'=>'add_friend_request',
                 'message'=> $re_mark['re_mark'].'请求添加为好友',
+                'pic_url' => $re_mark['pic_url'],
             ]);
             Gateway::sendToUid($user->id,$data);
             return $this->responseMsg('好友请求已发送，等待好友回复',201);

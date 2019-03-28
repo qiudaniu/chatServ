@@ -253,6 +253,7 @@
                                      height="30px" width="30px">
                             </div>
                             <span class="add_word">新的朋友</span>
+                            <div id="new_request" style="display: none"><span style="background-color: red">.</span></div>
                         </div>
                     </div>
                     <div class="friend-body">
@@ -332,7 +333,7 @@
             </div>
             <div style="display: none;" id="add_friend_detail" class="main-right">
                 <div class="chat-header">
-                    <h4 class="friend-name">女朋友</h4>
+                    <h4 class="friend-name">新的朋友</h4>
                 </div>
                 <div class="chat-body">
                     <div class="body-friend">
@@ -341,30 +342,6 @@
                         <div class="message">
                             我可以改变世界
                         </div>
-                    </div>
-                    <div class="body-me">
-
-                    </div>
-                </div>
-                <div class="chat-footer">
-                    <div class="tool">
-                        {{--发送文件 聊天记录 {{url('test')}}--}}
-                        {{--<form action="{{url('test')}}" method="post" enctype="multipart/form-data">
-                            {{ csrf_field() }}--}}
-                        <div class="image-input">
-                            <label for="file-input">
-                                <img src="{{asset('images/file.jpg')}}" height="30px" width="30px">
-                            </label>
-                            <input id="file-input" type="file" name="file" onclick="sendFile()">
-                        </div>
-                        <textarea rows="3" cols="62" id="send-data">
-
-                            </textarea>
-                        {{--点击发送时，1 将数据发送到后端 2 将数据呈现在内容body中 type="submit" name="submit" value="发送"--}}
-                        <input style="float: right" type="button" value="发送" onclick="outData()" >
-                        {{--</form>--}}
-
-
                     </div>
                 </div>
             </div>
@@ -397,7 +374,7 @@
                         </div>
                         <textarea rows="3" cols="62" id="send-data">
 
-                            </textarea>
+                        </textarea>
                         {{--点击发送时，1 将数据发送到后端 2 将数据呈现在内容body中 type="submit" name="submit" value="发送"--}}
                         <input style="float: right" type="button" value="发送" onclick="outData()" >
                         {{--</form>--}}
@@ -542,6 +519,13 @@
 
                 });
                 break;
+            case 'add_friend_request':
+                document.getElementById('friend').style.display = 'block';
+                document.getElementById('session').style.display = 'none';
+                document.getElementById('new_request').style.display = 'block';
+                var message = $data.message;
+                var pic_url = $data.pic_url;
+                break;
             default:
                 break;
         }
@@ -585,7 +569,7 @@
         document.getElementById("session").style.display = 'none';
     }
 
-    function show_chat_detail($this) {
+    function show_chat_detail() {
         document.getElementById("chat_detail").style.display = 'block';
         document.getElementById("add_friend_detail").style.display = 'none';
         document.getElementById("group_detail").style.display = 'none';
@@ -597,6 +581,7 @@
         document.getElementById("add_friend_detail").style.display = 'block';
         document.getElementById("group_detail").style.display = 'none';
         document.getElementById("friend_detail").style.display = 'none';
+        document.getElementById('new_request').style.display = 'none';
     }
 
     function group_detail() {
