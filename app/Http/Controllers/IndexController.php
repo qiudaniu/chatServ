@@ -14,6 +14,8 @@
  * 206 返回好友列表
  * 207 返回会话列表
  * 208 没有此用户
+ * 209 拒绝加好友
+ * 210 用户不在线
  *
  *
  * 301 用户发送信息，保存到数据库失败
@@ -126,12 +128,16 @@ class IndexController extends Controller
         $user = User::findUserForPhone($request->add_friend);
         if ($user){
             //当用户存在。发送添加好友请求，如果好友通过后，添加成功；不通过，添加失败
-            $re_mark = User::where('id',Auth::id())->select('re_mark','pic_url')->first();
+            $re_mark = User::where('id',Auth::id())->select('id','name','pic_url','login_status')->first();
             $data = json_encode([
                 'type'=>'add_friend_request',
-                'message'=> $re_mark['re_mark'].'请求添加为好友',
+                'message'=> $re_mark['name'].'请求添加为好友',
                 'pic_url' => $re_mark['pic_url'],
+                'form_user_id' => Auth::id(),
             ]);
+            /*if ($re_mark['login_status'] == 0){
+                return $this->responseMsg('用户不在线，请确认用户上线后再添加为好友',210);
+            }*/
             Gateway::sendToUid($user->id,$data);
             return $this->responseMsg('好友请求已发送，等待好友回复',201);
         }
@@ -141,18 +147,24 @@ class IndexController extends Controller
     //好友通过后，双方添加为好友。
     public function addFriend(Request $request)
     {
-        $user = User::findUserForPhone($request->add_friend);
-        if ($user){
-            $friend = Friends::addFriend(Auth::id(),$user->id);
-            if ($friend == 'ok'){
-                return $this->responseMsg('添加好友成功',202);
-            }elseif ($friend == 'fail'){
-                return $this->responseMsg('添加好友失败',203);
-            }elseif ($friend == 'is_friend'){
-                return $this->responseMsg('已经是好友',204);
-            }else{
-                return $this->responseMsg('添加好友未知错误',205);
-            }
+        switch ($request->status) {
+            case 1:
+                $friend = Friends::addFriend(Auth::id(), $request->from_user_id);
+                if ($friend == 'ok') {
+                    return $this->responseMsg('添加好友成功', 202);
+                } elseif ($friend == 'fail') {
+                    return $this->responseMsg('添加好友失败', 203);
+                } elseif ($friend == 'is_friend') {
+                    return $this->responseMsg('已经是好友', 204);
+                } else {
+                    return $this->responseMsg('添加好友未知错误', 205);
+                }
+                break;
+            case 2:
+                return $this->responseMsg('对方拒绝加好友', 209);
+                break;
+            default:
+                break;
         }
     }
 

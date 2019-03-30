@@ -134,6 +134,23 @@
 
 
 
+        .add-friend-detail{
+            width: 100%;
+            height: 80px;
+        }
+        .add-friend-img{
+            margin-top: 20px;
+            margin-left: 90px;
+            height: 50px;
+            width: 50px;
+            float: left;
+        }
+        .add-friend-word{
+            float: left;
+            margin-top: 25px;
+            margin-left: 10px;
+            font-weight: bold;
+        }
         .main-right{
             float: left;
             width: 458px;
@@ -223,7 +240,7 @@
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">关闭
                             </button>
-                            <button type="button" class="btn btn-primary" onclick="add_friend()">
+                            <button type="button" class="btn btn-primary" onclick="sendAddFriendRequest()">
                                 提交更改
                             </button>
                         </div>
@@ -235,7 +252,7 @@
                 <div class="search-main">
                     <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552156926711&di=4be383b64e02c10412c605c75161d2da&imgtype=0&src=http%3A%2F%2Fpic.qiantucdn.com%2F58pic%2F17%2F73%2F57%2F24v58PICpyg_1024.png" class="search-img">
                     <input type="text" name="search" class="search-text" placeholder="搜索" />
-                    <input type="submit" name="search-submit" class="search-submit">
+                    <input type="submit" name="search-submit" class="search-submit" value="提交">
                 </div>
                 <div class="session-list" style="display: block" id="session" onclick="show_chat_detail()">
 
@@ -335,14 +352,8 @@
                 <div class="chat-header">
                     <h4 class="friend-name">新的朋友</h4>
                 </div>
-                <div class="chat-body">
-                    <div class="body-friend">
-                        <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552207666873&di=3ec7658b5ea67262a3f4c580e2186d43&imgtype=0&src=http%3A%2F%2Fwww.zhuobufan.com%2FUserFiles%2FAlbum%2F17%2F01_12%2F8425d949-328c-414f-8fb3-deeb5d166fd0.jpg"
-                             class="friend-detail">
-                        <div class="message">
-                            我可以改变世界
-                        </div>
-                    </div>
+                <div id="add_friend_detail_list">
+
                 </div>
             </div>
             <div style="display: none;" id="group_detail" class="main-right">
@@ -422,6 +433,25 @@
 </div>
 @endsection
 <script>
+    function addFriend(id){
+        var vs = $('select  option:selected').val();
+        //回复加好友请求
+        $.ajax({
+            type:'post',
+            url:'/addFriend',
+            data:{'status':vs,'from_user_id':id},
+            headers : {
+                'X-CSRF-TOKEN' : $('meta[name = "csrf-token"]').attr('content')
+            },
+            success:function ($e) {
+                console.log($e);
+            },
+            error:function ($e) {
+                alert('fail'+$e);
+            }
+        });
+    }
+
     //获取会话列表
     $.ajax({
         type:'GET',
@@ -520,11 +550,27 @@
                 });
                 break;
             case 'add_friend_request':
+                alert(1);
                 document.getElementById('friend').style.display = 'block';
                 document.getElementById('session').style.display = 'none';
                 document.getElementById('new_request').style.display = 'block';
-                var message = $data.message;
-                var pic_url = $data.pic_url;
+                var str = '';
+                str += '<div class="add-friend-detail">' +
+                    '                <div class="add-friend-img">' +
+                    '                <img src="'+$data.pic_url+'"' +
+                    '                height="50px" width="50px">' +
+                    '                </div>' +
+                    '                <span class="add-friend-word"><h4>'+$data.message+'</h4></span>' +
+                    '            <div id="select_status" style="margin-top: 35px;margin-left: 50px;float: left">' +
+                    // '                <input type="hidden" id="from_user_id" name="from_user_id" value="'+$data.from_user_id+'">' +
+                    '                <select onchange="addFriend('+$data.form_user_id+')" name="status">' +
+                    '                <option value="">请选择</option>' +
+                    '                <option value="1">同意</option>' +
+                    '                <option value="2">拒绝</option>' +
+                    '                </select>' +
+                    '                </div>' +
+                    '                </div>';
+                document.getElementById("add_friend_detail_list").innerHTML = str;
                 break;
             default:
                 break;
@@ -596,8 +642,6 @@
         document.getElementById("add_friend_detail").style.display = 'none';
         document.getElementById("group_detail").style.display = 'none';
         document.getElementById("friend_detail").style.display = 'block';
-        /*var data = document.getElementsByClassName("friend-name");
-        console.log(data);*/
         document.getElementsByClassName("friend-name")[3]['innerHTML'] = obj.getElementsByClassName("add_word")[0]['innerHTML'];
         document.getElementById("friend").style.display = 'none';
         document.getElementById("session").style.display = 'block';
@@ -605,7 +649,7 @@
     }
 
     //发送加好友申请
-    function add_friend() {
+    function sendAddFriendRequest() {
         var phone = $("#add_friend").val();
         $.ajax({
             type:'POST',
@@ -618,12 +662,34 @@
             success: function (data) {
                 var obj = JSON.parse(data);
                 // console.log(obj);
-                if (obj.code == 201 || obj.code == 208) {
+                if (obj.code == 201 || obj.code == 208 || obj.code == 210) {
                     alert(obj.message);
+                    var str = '';
+                    var dataArr = obj.data;
+                    console.log(dataArr);
+                    for(var i=0,len=dataArr.length ; i<len ; i++){
+                        str += '<div class="session-list" onclick="show_chat_detail()">'+
+                            '<div class="session-list-img">'+
+                            '<img src="'+dataArr[i]['pic_url']+'" height="40px" width="40px">'+
+                            '</div>'+
+                            '<div class="session-list-body">'+
+                            '<div class="session-list-name">'+
+                            dataArr[i]['re_mark']+
+                            '</div>'+
+                            '<div class="session-list-message">'+
+                            dataArr[i]['re_mark']+
+                            '</div>'+
+                            '</div>'+
+                            '<div class="session-list-time">'+
+                            '14:15'+
+                            '</div>'+
+                            '</div>';
+                    }
+                    document.getElementById("add_friend_detail").innerHTML = str;
                 }
-
             },
             error: function (data) {
+                console.log(data);
                 alert("error" + data.data);
             }
         });
