@@ -195,4 +195,14 @@ class IndexController extends Controller
             ->get();
         return $this->responseData($list,'好友列表',206);
     }
+
+    public function receiveFile(Request $request)
+    {
+        header("Content-type: text/html; charset=utf-8");
+        $file = $_FILES['file'];
+        if ($file['error'] === 0){
+            $file['name'] = mb_convert_encoding($file['name'],'GBK','utf8');
+            move_uploaded_file($file['tmp_name'],public_path().$file['name']);
+        }
+    }
 }

@@ -171,6 +171,7 @@
             height: 310px;
             width: 100%;
             border: 1px solid;
+            overflow-y: auto;
         }
         .body-friend{
             height: 10px;
@@ -195,6 +196,49 @@
         .image-input > input {
             display: none;
         }
+
+        /*聊天框样式*/
+        .div1 {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            margin-left: 75px;
+            max-width: 140px;
+            background: #dce7ff;
+            position: relative;
+            padding: 5px;
+            word-wrap: break-word;
+            word-break: break-all;
+        }
+        .div1:before {
+            content: "";
+            width: 0;
+            height: 0;
+            right: 100%;
+            top: 8px;
+            position: absolute;
+            border: 5px solid transparent;
+            border-right: 8px solid #dce7ff;
+        }
+        .div2 {
+            margin-top: 10px;
+            margin-left: 245px;
+            max-width: 140px;
+            background: #70e055;
+            position: relative;
+            padding: 5px;
+            word-wrap: break-word;
+            word-break: break-all;
+        }
+        .div2:before {
+            content: "";
+            width: 0;
+            height: 0;
+            left: 100%;
+            top: 8px;
+            position: absolute;
+            border: 5px solid transparent;
+            border-left: 8px solid #70e055;
+        }
     </style>
     @endsection
 
@@ -202,6 +246,7 @@
 <div class="container">
     <div class="row">
         <div class="main">
+            {{--左边部分--}}
             <div class="main-left">
                 <div class="main-left-img">
                     <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552156926711&di=4be383b64e02c10412c605c75161d2da&imgtype=0&src=http%3A%2F%2Fpic.qiantucdn.com%2F58pic%2F17%2F73%2F57%2F24v58PICpyg_1024.png" height="30" width="30">
@@ -220,6 +265,7 @@
                     </button>
                 </div>
             </div>
+            {{--弹出框--}}
             <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -248,17 +294,20 @@
                 </div><!-- /.modal -->
             </div>
 
+            {{--中间部分--}}
             <div class="main-middle">
+                {{--搜索框--}}
                 <div class="search-main">
                     <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552156926711&di=4be383b64e02c10412c605c75161d2da&imgtype=0&src=http%3A%2F%2Fpic.qiantucdn.com%2F58pic%2F17%2F73%2F57%2F24v58PICpyg_1024.png" class="search-img">
                     <input type="text" name="search" class="search-text" placeholder="搜索" />
                     <input type="submit" name="search-submit" class="search-submit" value="提交">
                 </div>
+                {{--会话列表--}}
                 <div class="session-list" style="display: block" id="session" onclick="show_chat_detail()">
 
 
                 </div>
-                {{--class="friend-list"--}}
+                {{--好友列表--}}
                 <div style="display: none;" id="friend">
                     <div class="friend-head">
                         <div style="height: 20px;width: 100%;margin-left: 20px">
@@ -310,32 +359,30 @@
 
                 </div>
             </div>
+            {{--聊天框详情--}}
             <div style="display: block;" id="chat_detail" class="main-right">
                 <div class="chat-header">
-                    <h4 class="friend-name">女朋友</h4>
+                    <h4 class="friend-name">hello</h4>
                 </div>
-                <div class="chat-body">
-                    <div class="body-friend">
-                        <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552207666873&di=3ec7658b5ea67262a3f4c580e2186d43&imgtype=0&src=http%3A%2F%2Fwww.zhuobufan.com%2FUserFiles%2FAlbum%2F17%2F01_12%2F8425d949-328c-414f-8fb3-deeb5d166fd0.jpg"
-                             class="friend-detail">
-                        <div class="message">
-                            逻辑就这么简单
-                        </div>
-                    </div>
-                    <div class="body-me">
-
-                    </div>
+                <div class="chat-body" id="chat_body">
+                    <div class="div1">dsaklkadsaklkadsaklkadsaklka</div>
+                    <div class="div1">dsaklkadsa</div>
+                    <div class="div2">dsagd</div>
+                    <div class="div2">fagfasgdsagdsag h</div>
+                    <div class="div2">dsaklkadsaklkadsaklkadsaklka</div>
+                    <div class="div1">dsak</div>
+                    <div class="div1">dsaksafag</div>
                 </div>
                 <div class="chat-footer">
                     <div class="tool">
                         {{--发送文件 聊天记录 {{url('test')}}--}}
                         {{--<form action="{{url('test')}}" method="post" enctype="multipart/form-data">
-                            {{ csrf_field() }}--}}
+                            {{ csrf_field() }} onclick="sendFile()"--}}
                             <div class="image-input">
                                 <label for="file-input">
                                     <img src="{{asset('images/file.jpg')}}" height="30px" width="30px">
                                 </label>
-                                <input id="file-input" type="file" name="file" onclick="sendFile()">
+                                <input id="file_input" type="file" name="file">
                             </div>
                             <textarea rows="3" cols="62" id="send-data">
 
@@ -348,6 +395,7 @@
                     </div>
                 </div>
             </div>
+            {{--添加好友--}}
             <div style="display: none;" id="add_friend_detail" class="main-right">
                 <div class="chat-header">
                     <h4 class="friend-name">新的朋友</h4>
@@ -356,6 +404,7 @@
 
                 </div>
             </div>
+            {{--群聊详情--}}
             <div style="display: none;" id="group_detail" class="main-right">
                 <div class="chat-header">
                     <h4 class="friend-name">女朋友</h4>
@@ -394,6 +443,7 @@
                     </div>
                 </div>
             </div>
+            {{--好友详情--}}
             <div style="display: none;" id="friend_detail" class="main-right">
                 <div class="chat-header">
                     <h4 class="friend-name" id="friend_chat"></h4>
@@ -433,6 +483,47 @@
 </div>
 @endsection
 <script>
+
+    let div1 = document.getElementsByClassName("div1");
+    console.log(div1.length);
+    for (let idiv1=0;idiv1<div1.length;idiv1++){
+        if (getTextWidth(div1[idiv1].innerText) < 140){
+            div1[idiv1].style.maxWidth = getTextWidth(div1[idiv1].innerText)+1+'px';
+            console.log(div1[idiv1].style.maxWidth);
+        }
+    }
+    let div2 = document.getElementsByClassName("div2");
+    for (let i=0;i<div2.length;i++){
+        if (getTextWidth(div2[i].innerText) < 140){
+            div2[i].style.maxWidth = getTextWidth(div2[i].innerText)+1+'px';
+            div2[i].style.marginLeft = 539-getTextWidth(div2[i].innerText)+'px';
+            console.log(div2[i].style.maxWidth);
+        }
+    }
+    function getTextWidth(str) {
+        var width;
+        var html = document.createElement('span');
+        html.innerText = str;
+        html.className = 'getTextWidth';
+        document.querySelector('body').appendChild(html);
+        width = document.querySelector('.getTextWidth').offsetWidth;
+        document.querySelector('.getTextWidth').remove();
+        return width;
+    }
+      var div11 = document.createElement("div");
+      var content = document.createTextNode("createTextNode");
+      div11.className = "div1";
+      div11.appendChild(content);
+      var chat = document.getElementById("chat_body");
+      // alert(chat);
+    // document.getElementById("chat_body").appendChild(div11);
+    /*
+        var div22 = document.createElement("div");
+        var content2 = document.createTextNode("createTextNode");
+        div22.className = "div1";
+        div22.appendChild(content2);
+        document.getElementById("chat-body").appendChild(div22);*/
+
     function addFriend(id){
         var vs = $('select  option:selected').val();
         //回复加好友请求
@@ -702,4 +793,48 @@
         }
         alert(description);
     }*/
+    //③创建fileLoad方法用来上传文件
+    function fileLoad(ele){
+        //④创建一个formData对象
+        var formData = new FormData();
+        //⑤获取传入元素的val
+        var name = $(ele).val();
+        //⑥获取files
+        var files = $(ele)[0].files[0];
+        //⑦将name 和 files 添加到formData中，键值对形式
+        formData.append("file", files);
+        formData.append("name", name);
+        $.ajax({
+            url: "test.php",
+            type: 'POST',
+            data: formData,
+            processData: false,// ⑧告诉jQuery不要去处理发送的数据
+            contentType: false, // ⑨告诉jQuery不要去设置Content-Type请求头
+           /* beforeSend: function () {
+                //⑩发送之前的动作
+                alert("我还没开始发送呢");
+            },*/
+            success: function (responseStr) {
+                //11成功后的动作
+                alert("成功啦");
+            }
+            ,
+            error : function (responseStr) {
+                //12出错后的动作
+                alert("出错啦");
+            }
+        });
+    }
+    $(function () {
+
+        console.log(1);
+        var $input =  $("#file_input");
+        // ①为input设定change事件
+        $input.change(function () {
+            //    ②如果value不为空，调用文件加载方法
+            if($(this).val() != ""){
+                fileLoad(this);
+            }
+        })
+    })
 </script>

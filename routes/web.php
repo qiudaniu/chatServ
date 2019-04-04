@@ -25,6 +25,7 @@ Route::get('/getFriendList' , 'IndexController@friendList');
 Route::get('/getSessionList' , 'IndexController@sessionList');
 Route::post('/sendAddFriendRequest' , 'IndexController@sendAddFriendRequest');
 Route::post('/responseAddFriend' , 'IndexController@responseAddFriend');
+Route::post('/receiveFile' , 'IndexController@receiveFile');
 
 
 Route::post('/bind', 'IndexController@bind');
