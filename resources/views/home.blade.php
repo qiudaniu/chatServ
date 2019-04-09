@@ -528,14 +528,21 @@
         type:'GET',
         url: "/getSessionList",
         success:function($e){
-//            console.log($e);
             var obj = JSON.parse($e);
-            if (obj.code = 206){
+            if (obj.code === 207){
                 var str = '';
                 var dataArr = obj.data;
-                console.log(dataArr[0]['message']);
                 for(var i=0,len=dataArr.length ; i<len ; i++){
-                    str += '<div class="session-list" id="session_'+dataArr[i]['session_id']+'" onclick="show_chat_detail(this,dataAttr[i][\'message\'])">'+
+                    var arr = dataArr[i]['message'];
+                    if (Array.isArray(arr) && arr.length === 0)
+                    {
+                        arr = 0;
+                    }else {
+                        //转义双引号
+                        arr=JSON.stringify(arr).replace(/"/g,'&quot;');
+//                        arr.replace(/\"/g,'&quot;');
+                    }
+                    str += '<div class="session-list" id="session_'+dataArr[i]['session_id']+'" onclick="show_chat_detail(this,'+arr+')">'+
                      '<div class="session-list-img">'+
                      '<img src="'+dataArr[i]['pic_url']+'" height="40px" width="40px">'+
                      '</div>'+
@@ -566,7 +573,7 @@
         url: "/getFriendList",
         success : function ($e) {
             var obj = JSON.parse($e);
-            if (obj.code = 205){
+            if (obj.code === 206){
                 var str = '';
                 var dataArr = obj.data;
                 for(var i=0,len=dataArr.length ; i<len ; i++){
@@ -742,20 +749,22 @@
             }
             obj.style="background-color:#f4f7eb";//为什么要用this，而不是orderLi[i]，要点击的事件块发生颜色变化，同时上一步使得其他的块颜色保持不变，这就让上一次点击变化<br>//的颜色恢复到原来的颜色
         }
-        console.log(obj);
-        console.log(obj.getElementsByClassName("session-list-name")[0].innerHTML);
         var str = '';
         str += '<div class="chat-header">'+
             '<h4 class="friend-name">'+obj.getElementsByClassName("session-list-name")[0].innerHTML+'</h4>'+
             '</div>'+
-            '<div class="chat-body" id="chat_body">'+
-            '<div class="chat-left">'+
-            '<div class="chat-img">'+
-            '<img height="35px" width="35px" src="https://ss2.baidu.com/6ONYsjip0QIZ8tyhnq/it/u=3402452885,2340606435&fm=173&app=49&f=JPEG?w=640&h=463&s=D43371DA5E62049C48683419030080C4">'+
-            '</div>'+
-            '<div class="div1">dsaklkadsaklkadsaklkadsaklka</div>'+
-            '</div>'+
-            ' </div>'+
+            '<div class="chat-body" id="chat_body">';
+        if (message !== 0)
+        {
+//            console.log(message[0]['id']);
+            str +='<div class="chat-left">'+
+                '<div class="chat-img">'+
+                '<img height="35px" width="35px" src="https://ss2.baidu.com/6ONYsjip0QIZ8tyhnq/it/u=3402452885,2340606435&fm=173&app=49&f=JPEG?w=640&h=463&s=D43371DA5E62049C48683419030080C4">'+
+                '</div>'+
+                '<div class="div1">dsaklkadsaklkadsaklkadsaklka</div>'+
+                '</div>';
+        }
+        str +=' </div>'+
             '<div class="chat-footer">'+
             '<div class="tool">'+
             '<div class="image-input">'+
