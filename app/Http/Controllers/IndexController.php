@@ -5,6 +5,7 @@
  *
  * 101 好友id为空
  * 102 发送数据为空
+ * 103 好友不在线，将消息数据保存到数据库中
  *
  * 201 发送好友申请
  * 202 加好友成功
@@ -16,6 +17,7 @@
  * 208 没有此用户
  * 209 拒绝加好友
  * 210 用户不在线
+ * 211 登录时获取未读消息
  *
  *
  * 301 用户发送信息，保存到数据库失败
@@ -57,34 +59,18 @@ class IndexController extends Controller
 
     public function message(Request $request)
     {
-        // 发送的数据类型是json格式。
-//        $client_id = Redis::get('client_id_' . Auth::id());
-//        $this->bind($client_id, Auth::id());
-
-//        $requestData = json_decode($request->getContent());
-
-//        $requestBody = file_get_contents('php://input');
-        //$requestData 按照对象来获取属性
-//        exit(var_export($request->data));
-        $user_id = empty($request->user_id) ? '' : $request->user_id;
-        if (!$user_id) {
-            return $this->responseMsg('好友id不能为空', 101);
+        $session_id = empty($request->session_id) ? '' : $request->session_id;
+        if (!$session_id) {
+            return $this->responseMsg('会话id不能为空', 101);
         }
         $data = empty($request->data) ? '' : $request->data;
         if (!$data) {
             return $this->responseMsg('发送数据不能为空', 102);
         }
-        //$user_id指的是好友在用户表中的id。接收消息的用户id
-//        $this->bind(Redis::get('client_id_'.Auth::id()),Auth::id());
-//        return ;
-        /*if (Auth::check()){
-            exit(var_export(Gateway::getClientIdByUid(1)));
-        }*/
 
         //保存发送给好友的消息，并将消息发送给好友
-        $this->receiveData($user_id, $data);
+        $this->receiveData($session_id, $data);
 
-//        return $isONline;
         return $this->success();
 
     }
@@ -93,7 +79,7 @@ class IndexController extends Controller
      *   user_id     接收数据用户id
      *   data        数据
      */
-    private function receiveData($user_id, $data)
+    private function receiveData($session_id, $data)
     {
         // 判断用户是否在线。1） 数据库中字段login_status 。 2） 通过gateway::isUidOnline 判断用户是否在线
         /*
@@ -103,22 +89,24 @@ class IndexController extends Controller
 //        exit(var_export($data->type));
         $message = new message();
 
-        $arr = $message->saveData($user_id,$data);
+        $arr = $message->saveData($session_id,$data);
         if (! $arr['id']){
             return $this->responseMsg('数据库错误',301);
         }
 
-        $isUidOnline = Gateway::isUidOnline($user_id);
+        $isUidOnline = Gateway::isUidOnline($arr['user_id']);
 
-        $user = User::find($user_id);
+        $user = User::find($arr['user_id']);
         if ($user->login_status == 0 || $isUidOnline == 0){
-            return $this->responseMsg('对方没有上线，不能发送消息',103);
+            message::where('session_id',$session_id)->update(['is_read'=>1]);
+            return $this->responseMsg('好友暂时未上线，上线后将第一时间发送消息给好友',103);
         }
 
         //发送消息给好友
+        $arr['data']['type'] = $arr['type'];
         $sendData = json_encode($arr['data']);
         //sendToUid 中的 data 是一个字符串，所以要将数据转换成json数据
-        Gateway::sendToUid($user_id,$sendData);
+        Gateway::sendToUid($arr['user_id'],$sendData);
 
     }
     
@@ -179,7 +167,7 @@ class IndexController extends Controller
             ->select('friends.friend_id','friends.re_mark','sessions.session_id','users.pic_url') //,'messages.*'
             ->get();
         foreach ($list as $key=>$value){
-            $list[$key]['message'] = message::where('session_id','=',$list[0]['session_id'])
+            $list[$key]['message'] = message::where('session_id','=',$list[$key]['session_id'])
                 ->get();
         }
 
@@ -196,13 +184,58 @@ class IndexController extends Controller
         return $this->responseData($list,'好友列表',206);
     }
 
+    //接收文件和图片
     public function receiveFile(Request $request)
     {
-        header("Content-type: text/html; charset=utf-8");
+        /*header("Content-type: text/html; charset=utf-8");
         $file = $_FILES['file'];
         if ($file['error'] === 0){
             $file['name'] = mb_convert_encoding($file['name'],'GBK','utf8');
-            move_uploaded_file($file['tmp_name'],public_path().$file['name']);
+            move_uploaded_file($file['tmp_name'],public_path().'/'.$file['name']);
+            return $this->responseMsg('文件发送成功',212);
+        }*/
+        $file=$request->file('file');
+        $ext = $file->getClientOriginalExtension();
+        $extArr = ['jpg','jpeg','png'];
+        $filename=$file->getClientOriginalName();
+        $filename = iconv('utf-8', 'gbk', $filename);
+        $path = public_path().'/fileUpload/'.date('Y-m-d',time());
+        $fileSize = $file->getClientSize();
+        if (! is_dir($path))
+        {
+            mkdir($path,0777,true);
         }
+        $file->move($path,$filename);
+        if (in_array($ext,$extArr))
+        {
+            $message = '图片';
+        }else{
+            $message = '文件';
+        }
+        $data = [
+            'downloadPath' => $path.'/'.$filename,
+            'fileSize' => $fileSize,
+        ];
+        return $this->responseData($data,$message,212);
+    }
+
+    //当登录时返回所有未读消息
+    public function notRead()
+    {
+        $user_id = Auth::id();
+        $data = message::join('sessions','messages.session_id','=','sessions.session_id')
+            ->join('friends','sessions.friend_id','=','friends.friend_id')
+            ->where('friends.user_id','=',$user_id)
+            ->where('is_read','=',1)
+            ->select('messages.id','messages.session_id','messages.send_time','messages.message_type','messages.message_data','friends.my_friend_id')
+            ->get();
+        foreach ($data as $key=>$value)
+        {
+            $data[$key]['type'] = 'send';
+            Gateway::sendToUid($data[$key]['my_friend_id'],json_encode($data[$key]));
+            message::where('id',$data[$key]['id'])
+                ->update(['is_read'=>0]);
+        }
+        return $this->responseMsg('获取未读消息',211);
     }
 }

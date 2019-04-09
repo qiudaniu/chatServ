@@ -10,14 +10,17 @@ class message extends Model
     protected $fillable = ['from_user_id','to_user_id','message_type','send_time','message_data'];
 
 
-    public function saveData($user_id,$data)
+    public function saveData($session_id,$data)
     {
+        $user_id = Sessions::join('friends','sessions.friend_id','=','friends.friend_id')
+            ->select('friends.user_id')
+            ->where('sessions.session_id',$session_id)
+            ->first();
         //$data 一个数组
         $send_time = date('Y-m-d H:i:s',time());
 //        $send_time = $data['send_time'] ? $data['send_time'] : date('Y-m-d H:i:s',time());
         $resultData = [
-            'from_user_id' => Auth::id(),
-            'to_user_id' => $user_id,
+            'session_id' => $session_id,
             'send_time' => $send_time,
         ];
         switch ($data['type'])
@@ -38,8 +41,10 @@ class message extends Model
         $id = $this->insertGetId($resultData);
 
         $arr = [
+            'type' => 'send',
             'id' => $id,
             'data' => $resultData,
+            'user_id' => $user_id->user_id,
         ];
         return $arr;
 

@@ -198,6 +198,10 @@
         }
 
         /*聊天框样式*/
+        .chat-left{
+            width: 100%;
+            height: 60px;
+        }
         .div1 {
             margin-top: 10px;
             margin-bottom: 10px;
@@ -239,6 +243,13 @@
             border: 5px solid transparent;
             border-left: 8px solid #70e055;
         }
+        .chat-img{
+            margin-top: 0;
+            width: 40px;
+            height: 40px;
+            margin-left: 25px;
+            float: left;
+        }
     </style>
     @endsection
 
@@ -249,14 +260,14 @@
             {{--左边部分--}}
             <div class="main-left">
                 <div class="main-left-img">
-                    <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552156926711&di=4be383b64e02c10412c605c75161d2da&imgtype=0&src=http%3A%2F%2Fpic.qiantucdn.com%2F58pic%2F17%2F73%2F57%2F24v58PICpyg_1024.png" height="30" width="30">
+                    <img src="{{Auth::user()->pic_url}}" height="30" width="30">
                 </div>
                 <div class="main-left-chat-list">
-                    <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552156926711&di=4be383b64e02c10412c605c75161d2da&imgtype=0&src=http%3A%2F%2Fpic.qiantucdn.com%2F58pic%2F17%2F73%2F57%2F24v58PICpyg_1024.png"
+                    <img src="http://qiudaniu.top/images/chat_list.jpg"
                          height="20" width="20" onclick="sessionList()">
                 </div>
                 <div class="main-left-friend-list">
-                    <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552156926711&di=4be383b64e02c10412c605c75161d2da&imgtype=0&src=http%3A%2F%2Fpic.qiantucdn.com%2F58pic%2F17%2F73%2F57%2F24v58PICpyg_1024.png"
+                    <img src="http://qiudaniu.top/images/friend_list.jpg"
                          height="20" width="20" onclick="friendList()">
                 </div>
                 <div class="main-left-add-friend">
@@ -303,7 +314,7 @@
                     <input type="submit" name="search-submit" class="search-submit" value="提交">
                 </div>
                 {{--会话列表--}}
-                <div class="session-list" style="display: block" id="session" onclick="show_chat_detail()">
+                <div style="display: block" id="session">
 
 
                 </div>
@@ -361,39 +372,35 @@
             </div>
             {{--聊天框详情--}}
             <div style="display: block;" id="chat_detail" class="main-right">
-                <div class="chat-header">
+                {{--<div class="chat-header">
                     <h4 class="friend-name">hello</h4>
                 </div>
                 <div class="chat-body" id="chat_body">
-                    <div class="div1">dsaklkadsaklkadsaklkadsaklka</div>
-                    <div class="div1">dsaklkadsa</div>
-                    <div class="div2">dsagd</div>
-                    <div class="div2">fagfasgdsagdsag h</div>
-                    <div class="div2">dsaklkadsaklkadsaklkadsaklka</div>
-                    <div class="div1">dsak</div>
-                    <div class="div1">dsaksafag</div>
+                    <div class="chat-left">
+                        <div class="chat-img">
+                            <img height="35px" width="35px" src="https://ss2.baidu.com/6ONYsjip0QIZ8tyhnq/it/u=3402452885,2340606435&fm=173&app=49&f=JPEG?w=640&h=463&s=D43371DA5E62049C48683419030080C4">
+                        </div>
+                        <div class="div1">dsaklkadsaklkadsaklkadsaklka</div>
+                    </div>
                 </div>
                 <div class="chat-footer">
                     <div class="tool">
-                        {{--发送文件 聊天记录 {{url('test')}}--}}
-                        {{--<form action="{{url('test')}}" method="post" enctype="multipart/form-data">
-                            {{ csrf_field() }} onclick="sendFile()"--}}
-                            <div class="image-input">
-                                <label for="file-input">
-                                    <img src="{{asset('images/file.jpg')}}" height="30px" width="30px">
-                                </label>
-                                <input id="file_input" type="file" name="file">
-                            </div>
-                            <textarea rows="3" cols="62" id="send-data">
+                        --}}{{--发送文件 聊天记录 {{url('test')}}--}}{{--
+                        <div class="image-input">
+                            <label for="file_input">
+                                <img src="{{asset('images/file.jpg')}}" height="30px" width="30px">
+                            </label>
+                            <input id="file_input" type="file" name="file">
+                        </div>
+                        <textarea rows="3" cols="62" id="send-data">
 
                             </textarea>
-                            {{--点击发送时，1 将数据发送到后端 2 将数据呈现在内容body中 type="submit" name="submit" value="发送"--}}
-                            <input style="float: right" type="button" value="发送" onclick="outData()" >
-                        {{--</form>--}}
+                        --}}{{--点击发送时，1 将数据发送到后端 2 将数据呈现在内容body中 type="submit" name="submit" value="发送"--}}{{--
+                        <input style="float: right" type="button" value="发送" onclick="outData()" >
 
 
                     </div>
-                </div>
+                </div>--}}
             </div>
             {{--添加好友--}}
             <div style="display: none;" id="add_friend_detail" class="main-right">
@@ -465,7 +472,7 @@
                             <label for="file-input">
                                 <img src="{{asset('images/file.jpg')}}" height="30px" width="30px">
                             </label>
-                            <input id="file-input" type="file" name="file" onclick="sendFile()">
+                            <input id="file-input" type="file" name="file">
                         </div>
                         <textarea rows="3" cols="62" id="send-data">
 
@@ -484,22 +491,8 @@
 @endsection
 <script>
 
-    let div1 = document.getElementsByClassName("div1");
-    console.log(div1.length);
-    for (let idiv1=0;idiv1<div1.length;idiv1++){
-        if (getTextWidth(div1[idiv1].innerText) < 140){
-            div1[idiv1].style.maxWidth = getTextWidth(div1[idiv1].innerText)+1+'px';
-            console.log(div1[idiv1].style.maxWidth);
-        }
-    }
-    let div2 = document.getElementsByClassName("div2");
-    for (let i=0;i<div2.length;i++){
-        if (getTextWidth(div2[i].innerText) < 140){
-            div2[i].style.maxWidth = getTextWidth(div2[i].innerText)+1+'px';
-            div2[i].style.marginLeft = 539-getTextWidth(div2[i].innerText)+'px';
-            console.log(div2[i].style.maxWidth);
-        }
-    }
+
+    //获取元素长度
     function getTextWidth(str) {
         var width;
         var html = document.createElement('span');
@@ -510,19 +503,6 @@
         document.querySelector('.getTextWidth').remove();
         return width;
     }
-      var div11 = document.createElement("div");
-      var content = document.createTextNode("createTextNode");
-      div11.className = "div1";
-      div11.appendChild(content);
-      var chat = document.getElementById("chat_body");
-      // alert(chat);
-    // document.getElementById("chat_body").appendChild(div11);
-    /*
-        var div22 = document.createElement("div");
-        var content2 = document.createTextNode("createTextNode");
-        div22.className = "div1";
-        div22.appendChild(content2);
-        document.getElementById("chat-body").appendChild(div22);*/
 
     function addFriend(id){
         var vs = $('select  option:selected').val();
@@ -550,12 +530,12 @@
         success:function($e){
 //            console.log($e);
             var obj = JSON.parse($e);
-            if (obj.code == 206){
+            if (obj.code = 206){
                 var str = '';
                 var dataArr = obj.data;
-                console.log(dataArr);
+                console.log(dataArr[0]['message']);
                 for(var i=0,len=dataArr.length ; i<len ; i++){
-                    str += '<div class="session-list" onclick="show_chat_detail()">'+
+                    str += '<div class="session-list" id="session_'+dataArr[i]['session_id']+'" onclick="show_chat_detail(this,dataAttr[i][\'message\'])">'+
                      '<div class="session-list-img">'+
                      '<img src="'+dataArr[i]['pic_url']+'" height="40px" width="40px">'+
                      '</div>'+
@@ -572,7 +552,10 @@
                      '</div>'+
                      '</div>';
                 }
-                document.getElementById("session").innerHTML = str;
+                if(str)
+                {
+                    document.getElementById("session").innerHTML = str;
+                }
 
             }
         }
@@ -583,7 +566,7 @@
         url: "/getFriendList",
         success : function ($e) {
             var obj = JSON.parse($e);
-            if (obj.code == 205){
+            if (obj.code = 205){
                 var str = '';
                 var dataArr = obj.data;
                 for(var i=0,len=dataArr.length ; i<len ; i++){
@@ -595,7 +578,10 @@
                         '<input type="hidden" name="my_friend_id" value="'+dataArr[i]['my_friend_id']+'">'+
                         '</div>';
                 }
-                document.getElementById('friend_list').innerHTML = str;
+                if(str)
+                {
+                    document.getElementById('friend_list').innerHTML = str;
+                }
             }
         }
 
@@ -603,16 +589,51 @@
     window.onload=function (){
         var order=document.getElementsByClassName("session-list");
         order[0].style="background-color:#f4f7eb";
-        for(i=0;i<order.length;i++) {//遍历处理，对于每个块都有onclick函数
+        /*var order=document.getElementsByClassName("session-list");
+        if(order.length != 0)
+        {
+            order[0].style="background-color:#f4f7eb";
+            for(i=0;i<order.length;i++) {//遍历处理，对于每个块都有onclick函数
 
-            order[i].onclick = function () {
-                for(i=0;i<order.length;i++){//在点击事件中再加载一个遍历，当点击事件触发时，先让其他元素的颜色保持不变
-                    order[i].style="background-color:aliceblue";
-                }
-                this.style="background-color:#f4f7eb";//为什么要用this，而不是orderLi[i]，要点击的事件块发生颜色变化，同时上一步使得其他的块颜色保持不变，这就让上一次点击变化<br>//的颜色恢复到原来的颜色
+                order[i].onclick = function () {
+                    for(j=0;j<order.length;j++){//在点击事件中再加载一个遍历，当点击事件触发时，先让其他元素的颜色保持不变
+                        order[j].style="background-color:aliceblue";
+                    }
+                    this.style="background-color:#f4f7eb";//为什么要用this，而不是orderLi[i]，要点击的事件块发生颜色变化，同时上一步使得其他的块颜色保持不变，这就让上一次点击变化<br>//的颜色恢复到原来的颜色
+                };
             }
+        }*/
 
+        var div1 = document.getElementsByClassName("div1");
+        for (var idiv1 = 0; idiv1 < div1.length; idiv1++) {
+            if (getTextWidth(div1[idiv1].innerText) < 140) {
+                div1[idiv1].style.maxWidth = getTextWidth(div1[idiv1].innerText) + 12 + 'px';
+            }
         }
+        var div2 = document.getElementsByClassName("div2");
+        for (var i = 0; i < div2.length; i++) {
+            if (getTextWidth(div2[i].innerText) < 140) {
+                div2[i].style.maxWidth = getTextWidth(div2[i].innerText) + 10 + 'px';
+                div2[i].style.marginLeft = 376 - getTextWidth(div2[i].innerText) + 'px';
+            }
+        }
+        var div11 = document.createElement("div");
+        var content = document.createTextNode("createTextNode");
+        div11.className = "div1";
+        div11.appendChild(content);
+        document.getElementById("chat_body").appendChild(div11);
+        $(function () {
+
+            console.log(55);
+            var $input =  $("#file_input");
+            // ①为input设定change事件
+            $input.change(function () {
+                //    ②如果value不为空，调用文件加载方法
+                if($(this).val() != ""){
+                    fileLoad(this);
+                }
+            })
+        })
     };
     ws = new WebSocket("ws://127.0.0.1:8282");
     ws.onmessage = function($e){
@@ -632,7 +653,7 @@
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     success : function($data){
-//                        alert('ok');
+//                        alert('ok');`
                     },
                     error : function ($data) {
                         alert("fail"+$data);
@@ -641,7 +662,6 @@
                 });
                 break;
             case 'add_friend_request':
-                alert(1);
                 document.getElementById('friend').style.display = 'block';
                 document.getElementById('session').style.display = 'none';
                 document.getElementById('new_request').style.display = 'block';
@@ -663,6 +683,9 @@
                     '                </div>';
                 document.getElementById("add_friend_detail_list").innerHTML = str;
                 break;
+            case 'send':
+                console.log($data);
+                break;
             default:
                 break;
         }
@@ -678,7 +701,7 @@
             type: 'POST',
             url: "/message",
 //            contentType: "application/json",//如果想以json格式把数据提交到后台的话，这个必须有，否则只会当做表单提交
-            data: {"user_id": 2 , "data": {"type":"text","message":message}},//JSON.stringify()必须有,否则只会当做表单的格式提交
+            data: {"session_id": 17 , "data": {"type":"text","message":message}},//JSON.stringify()必须有,否则只会当做表单的格式提交
 //            dataType: "json",//期待返回的数据类型
             /*headers : {
                 'X-CSRF-TOKEN' : $('meta[name = "_token"]').attr('content')
@@ -706,11 +729,50 @@
         document.getElementById("session").style.display = 'none';
     }
 
-    function show_chat_detail() {
+    function show_chat_detail(obj,message) {
         document.getElementById("chat_detail").style.display = 'block';
         document.getElementById("add_friend_detail").style.display = 'none';
         document.getElementById("group_detail").style.display = 'none';
         document.getElementById("friend_detail").style.display = 'none';
+        var order=document.getElementsByClassName("session-list");
+        if(order.length != 0)
+        {
+            for(j=0;j<order.length;j++){//在点击事件中再加载一个遍历，当点击事件触发时，先让其他元素的颜色保持不变
+                order[j].style="background-color:aliceblue";
+            }
+            obj.style="background-color:#f4f7eb";//为什么要用this，而不是orderLi[i]，要点击的事件块发生颜色变化，同时上一步使得其他的块颜色保持不变，这就让上一次点击变化<br>//的颜色恢复到原来的颜色
+        }
+        console.log(obj);
+        console.log(obj.getElementsByClassName("session-list-name")[0].innerHTML);
+        var str = '';
+        str += '<div class="chat-header">'+
+            '<h4 class="friend-name">'+obj.getElementsByClassName("session-list-name")[0].innerHTML+'</h4>'+
+            '</div>'+
+            '<div class="chat-body" id="chat_body">'+
+            '<div class="chat-left">'+
+            '<div class="chat-img">'+
+            '<img height="35px" width="35px" src="https://ss2.baidu.com/6ONYsjip0QIZ8tyhnq/it/u=3402452885,2340606435&fm=173&app=49&f=JPEG?w=640&h=463&s=D43371DA5E62049C48683419030080C4">'+
+            '</div>'+
+            '<div class="div1">dsaklkadsaklkadsaklkadsaklka</div>'+
+            '</div>'+
+            ' </div>'+
+            '<div class="chat-footer">'+
+            '<div class="tool">'+
+            '<div class="image-input">'+
+            '<label for="file_input">'+
+            '<img src="{{asset('images/file.jpg')}}" height="30px" width="30px">'+
+            '</label>'+
+            '<input id="file_input" type="file" name="file">'+
+            '</div>'+
+            '<textarea rows="3" cols="62" id="send-data">'+
+            '</textarea>'+
+            '<input style="float: right" type="button" value="发送" onclick="outData()" >'+
+            '</div>'+
+            '</div>';
+        if(str)
+        {
+            document.getElementById("chat_detail").innerHTML = str;
+        }
     }
 
     function show_friend_list() {
@@ -805,18 +867,28 @@
         formData.append("file", files);
         formData.append("name", name);
         $.ajax({
-            url: "test.php",
+            url: "receiveFile",
             type: 'POST',
             data: formData,
             processData: false,// ⑧告诉jQuery不要去处理发送的数据
             contentType: false, // ⑨告诉jQuery不要去设置Content-Type请求头
+            headers : {
+                'X-CSRF-TOKEN' : $('meta[name = "csrf-token"]').attr('content')
+            },
            /* beforeSend: function () {
                 //⑩发送之前的动作
                 alert("我还没开始发送呢");
             },*/
             success: function (responseStr) {
-                //11成功后的动作
-                alert("成功啦");
+                var str = JSON.parse(responseStr);
+                if (str.message = '图片')
+                {
+
+                }
+                else
+                {
+
+                }
             }
             ,
             error : function (responseStr) {
@@ -825,16 +897,4 @@
             }
         });
     }
-    $(function () {
-
-        console.log(1);
-        var $input =  $("#file_input");
-        // ①为input设定change事件
-        $input.change(function () {
-            //    ②如果value不为空，调用文件加载方法
-            if($(this).val() != ""){
-                fileLoad(this);
-            }
-        })
-    })
 </script>
