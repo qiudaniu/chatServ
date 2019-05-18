@@ -27,6 +27,7 @@ Route::post('/sendAddFriendRequest' , 'IndexController@sendAddFriendRequest');
 Route::post('/responseAddFriend' , 'IndexController@responseAddFriend');
 Route::post('/receiveFile' , 'IndexController@receiveFile');
 Route::get('/notRead' , 'IndexController@notRead');
+Route::post('/profile' , 'IndexController@profile');
 
 
 Route::post('/bind', 'IndexController@bind');
